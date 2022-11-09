@@ -192,7 +192,7 @@ assign HDMI_FREEZE = 0;
 assign AUDIO_S = 0;
 assign AUDIO_L = {snd_l, 6'd0};
 assign AUDIO_R = {snd_r, 6'd0};
-assign AUDIO_MIX = status[10:9];
+assign AUDIO_MIX = 3; // Arcade is mono, status[10:9];
 
 //////////////////////////////////////////////////////////////////
 
@@ -214,9 +214,7 @@ localparam CONF_STR = {
 	"O[122:121],Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"O7,Blending,Off,On;",
-	"O6,Freeze,Off,On;",
-	"O8,Test,Off,On;",
-	"O9A,Stereo Mix,None,25%,50%,100%;",
+	//"O9A,Stereo Mix,None,25%,50%,100%;",
 	"-;",
 	"DIP;",
 	"-;",
@@ -302,7 +300,6 @@ pll pll
 	.refclk(CLK_50M),
 	.rst(0),
 	.outclk_0(clk_sys),
-	//.outclk_1(clk_48M),
 	.outclk_1(clk_ram),
 	.locked(pll_locked)
 );
@@ -412,8 +409,8 @@ target_top target_top
 	.inputs_p2(~{2'b00,m_down2,m_up2,m_right2,m_left2,1'b0,m_fire2}),
 	.inputs_sys(~{2'b00,m_coin2,m_coin1,2'b00,m_start2,m_start1}),
 
-	.inputs_dip1(~{flip,test,6'b011111}),
-	.inputs_dip2(~{freeze,7'b1111111}),
+	.inputs_dip1(~dip_sw[0]),
+	.inputs_dip2(~dip_sw[1]),
 
 	.cpu_rom_addr(cpu_rom_addr),
 	.cpu_rom_do(cpu_rom_addr[0] ? rom_do[15:8] : rom_do[7:0]),

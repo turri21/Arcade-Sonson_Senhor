@@ -193,7 +193,7 @@ begin
     end if;
   end process;
 
-	cpu_reset <= rst_24M;
+  cpu_reset <= rst_24M;
 
   cpu_inst : mc6809i
   port map
@@ -255,7 +255,7 @@ begin
     if rst_24M = '1' then
       graphics_o.bit8(0) <= (others => '0');
     elsif rising_edge(clk_24M) then
-      if (scroll_cs) and not (cpu_r_wn) then
+      if scroll_cs and not cpu_r_wn then
         graphics_o.bit8(0) <= cpu_d_o;
       end if;
     end if;
