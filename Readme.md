@@ -4,7 +4,7 @@
 
 Original core developed by [Mark McDougall(tcdev)] and Ported to MiST
 
-Ported to MiSTer by [Mike Simone](https://github.com/MikeS1)
+Ported to MiSTer by [Mike Simone](https://github.com/MikeS11)
 
 ## Description
 
