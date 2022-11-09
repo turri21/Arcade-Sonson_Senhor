@@ -10,7 +10,7 @@ Ported to MiSTer by [Mike Simone](https://github.com/MikeS11)
 
 This is a simulation model of the **Capcom SonSon** hardware.
 
-Original source is located in `doc/`
+Original source is located in `docs/`
 
 ## Controls
 
