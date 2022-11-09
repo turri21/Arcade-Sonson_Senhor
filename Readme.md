@@ -14,14 +14,11 @@ Original source is located in `doc/`
 
 ## Controls
 
-WIP
-
-
-
 
 
 ## To-Do
 
+*Add Hi Scores
 
 
 
