@@ -1,10 +1,10 @@
 # [Arcade: Capcom SonSon](https://en.wikipedia.org/wiki/SonSon) for [MiSTer](https://mister-devel.github.io/MkDocs_MiSTer/)
 
-![Joust 2 Logo](docs/SonsonCover.jpg)
+![SonSon 2 Logo](docs/SonsonCover.jpg)
 
 Original core developed by [Mark McDougall(tcdev)] and Ported to MiST
 
-Ported to MiSTer by [Mike Simone](https://github.com/MikeS1)
+Ported to MiSTer by [Mike Simone](https://github.com/MikeS11)
 
 ## Description
 
@@ -16,14 +16,14 @@ Original source is located in `doc/`
 
 WIP
 
-## Status
 
-* Sound is not at the correct speed.
+
+
 
 ## To-Do
 
-* Add dip switches
-* fix sound speed
+
+
 
 ## ROM Files Instructions
 
