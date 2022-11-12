@@ -23,6 +23,9 @@ entity PACE is
     -- video
     video_i         : in from_VIDEO_t;
     video_o         : out to_VIDEO_t;
+    vid_h_center    : in std_logic_vector(3 downto 0);
+    vid_v_center    : in std_logic_vector(2 downto 0);
+    vid_timing      : in std_logic;
 
     -- audio
     audio_i         : in from_AUDIO_t;
@@ -121,7 +124,11 @@ begin
 
 			-- video (incl. clk)
       video_i         => video_i,
-      video_o         => video_out
+      video_o         => video_out,
+      
+      vid_h_center    => vid_h_center, 
+      vid_v_center    => vid_v_center, 
+      vid_timing      => vid_timing
     );
 
     sound_inst : entity work.sonson_soundboard

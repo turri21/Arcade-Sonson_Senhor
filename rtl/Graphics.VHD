@@ -26,7 +26,11 @@ entity Graphics is
     graphics_o      : out from_GRAPHICS_t;
 
     video_i         : in from_VIDEO_t;
-    video_o         : out to_VIDEO_t
+    video_o         : out to_VIDEO_t;
+
+    vid_h_center    : in std_logic_vector(3 downto 0);
+    vid_v_center    : in std_logic_vector(2 downto 0);
+    vid_timing      : in std_logic
   );
 
 end Graphics;
@@ -75,6 +79,10 @@ begin
 
       -- video control signals (out)
       video_ctl_o     => from_video_ctl,
+
+      vid_h_center    => vid_h_center, 
+      vid_v_center    => vid_v_center, 
+      vid_timing      => vid_timing, 
 
       -- VGA signals (out)
       video_o         => video_o_s

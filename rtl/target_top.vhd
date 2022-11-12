@@ -19,6 +19,9 @@ entity target_top is
     vid_vs        : out std_logic;
     vid_hb        : out std_logic;
     vid_vb        : out std_logic;
+    vid_h_center  : in std_logic_vector(3 downto 0);
+    vid_v_center  : in std_logic_vector(2 downto 0);
+    vid_timing    : in std_logic;
     vid_r         : out std_logic_vector(3 downto 0);
     vid_g         : out std_logic_vector(3 downto 0);
     vid_b         : out std_logic_vector(3 downto 0);	
@@ -92,6 +95,9 @@ pace_inst : entity work.pace
     inputs_sys       	=> inputs_sys,
     inputs_dip1       => inputs_dip1, 
     inputs_dip2       => inputs_dip2, 
+    vid_h_center      => vid_h_center, 
+    vid_v_center      => vid_v_center, 
+    vid_timing        => vid_timing, 
     video_i           => video_i,
     video_o           => video_o,
     audio_i           => audio_i,

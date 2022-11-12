@@ -17,6 +17,10 @@ entity sonson_video_controller is
     -- control signals (out)
     video_ctl_o   : out from_VIDEO_CTL_t;
 
+    vid_h_center  : in std_logic_vector(3 downto 0);
+    vid_v_center  : in std_logic_vector(2 downto 0);
+    vid_timing    : in std_logic;
+
     -- video output control & data
     video_o       : out to_VIDEO_t
   );
@@ -30,6 +34,7 @@ architecture SYN of sonson_video_controller is
 
   signal hcnt                   : unsigned(8 downto 0);
   signal vcnt                   : unsigned(8 downto 0);
+  signal vid_offset             : signed(4 downto 0);
   signal hsync                  : std_logic;
   signal vsync                  : std_logic;
   signal hblank                 : std_logic; -- hblank mux
@@ -43,7 +48,8 @@ begin
   -------------------
   --  Note: this is not what the hardware originally has.
   --  hcnt [x180..x1FF-x000..x0FF] => 128+256 = 384 pixels,  384/6Mhz => 1 line is 64us (15.6KHz)
-  --  vcnt [x1FA..x1FF-x000..x0FF] =>   6+256 = 262 lines, 1 frame is 262 x 64us = 16.76ms (59.6Hz)
+  --  vcnt [x1FA..x1FF-x000..x0FF] =>   6+256 = 262 lines, 1 frame is 262 x 64us = 16.76ms (59.6Hz)    
+  -- ms testing dropped the freq to 57.3Hz or moving to 273 lines
 
   process (reset, clk, clk_ena)
   begin
@@ -56,7 +62,11 @@ begin
         hcnt <= '1'&x"80";
         vcnt <= vcnt + 1;
         if vcnt = '0'&x"FF" then
-            vcnt <= '1'&x"FA";
+          if vid_timing then
+            vcnt <= '1'&x"E6"; -- Checked from FA to push the VSync freq to 57.3Hz
+          else
+            vcnt <= '1'&x"FA"; -- Checked from FA to push the VSync freq to 59.6Hz
+          end if;
         end if;
       end if;
     end if;
@@ -73,7 +83,7 @@ begin
       -- display blank
       if hcnt = '0'&x"0F" then
         hblank <= '0';
-        if vcnt = '0'&x"00" then
+        if vcnt = '0'&x"00" then -- Checked display area to 384x272
           vblank <= '0';
         end if;
       end if;
@@ -85,15 +95,21 @@ begin
       end if;
 
       -- display sync
-      if hcnt = '1'&x"A8" then
+        if vid_timing then -- Adjust v_center offset so it does not travel outside its range
+          vid_offset <= B"11000"; -- -8
+        else
+          vid_offset <= B"00010"; -- 2
+        end if;
+
+      if signed(hcnt) = signed(vid_h_center) + ('1' & x"A8") then
         hsync <= '1';
-        if vcnt = '1'&x"FC" then
+        if signed(vcnt) = signed(vid_v_center) + ('1' & x"FC") + vid_offset then 
           vsync <= '1';
         end if;
       end if;
-      if hcnt = '1'&x"DF" then
+      if signed(hcnt) = signed(vid_h_center) + ('1' & x"C8") then 
         hsync <= '0';
-        if vcnt = '1'&x"FE" then
+        if signed(vcnt) = signed(vid_v_center) + ('1' & x"FE") + vid_offset then
           vsync <= '0';
         end if;
       end if;

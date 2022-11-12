@@ -205,7 +205,7 @@ assign VIDEO_ARY = (!ar) ? 12'd3 : 12'd0;
 // 0         1         2         3          4         5         6   
 // 01234567890123456789012345678901 23456789012345678901234567890123
 // 0123456789ABCDEFGHIJKLMNOPQRSTUV 0123456789ABCDEFGHIJKLMNOPQRSTUV
-//    XXX   
+//    XXX X  XXXXXXX                                               
 
 `include "build_id.v" 
 localparam CONF_STR = {
@@ -213,8 +213,10 @@ localparam CONF_STR = {
 	"-;",
 	"O[122:121],Aspect ratio,Original,Full Screen,[ARC1],[ARC2];",
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
-	"O7,Blending,Off,On;",
-	//"O9A,Stereo Mix,None,25%,50%,100%;",
+    "P1,Video Settings;",
+	"P1OAD,Analog Video H-Pos,0,+1,+2,+3,+4,+5,+6,+7,-8,-7,-6,-5,-4,-3,-2,-1;",
+	"P1OEG,Analog Video V-Pos,0,+1,+2,+3,-4,-3,-2,-1;",
+	"P1O7,Video Timing,Normal(59.6Hz),PCB(55.4Hz);",
 	"-;",
 	"DIP;",
 	"-;",
@@ -222,7 +224,6 @@ localparam CONF_STR = {
 	"jn,A,B,Start,Select,R,L;",
 	"jp,B,A,Start,,Select;",
 	"T[0],Reset;",
-	"R[0],Reset and close OSD;",
 	"V,v",`BUILD_DATE 
 };
 
@@ -241,7 +242,7 @@ wire  [7:0] ioctl_dout;
 wire  [7:0] ioctl_din;
 wire ioctl_wait;
 
-wire  blend    = status[7];
+wire  freq55    = status[7];
 wire  test     = status[8];
 wire  freeze   = status[6];
 
@@ -304,7 +305,7 @@ pll pll
 	.locked(pll_locked)
 );
 
-wire reset = RESET | status[0] | buttons[1];
+wire iRST  = RESET | status[0] | buttons[1] | ireset;
 
 ///////////////////         Keyboard           //////////////////
 
@@ -361,12 +362,10 @@ wire m_fire2    = btn_fire    | joystick_1[4];
 
 //Start/coin
 wire m_start1   = btn_1p_start | joy[5];
-wire m_start2   = btn_2p_start | joy[7];
-wire m_coin1    = btn_coin1    | joy[6];
+wire m_start2   = btn_2p_start | joy[6];
+wire m_coin1    = btn_coin1    | joy[7];
 wire m_coin2    = btn_coin2;
 wire m_pause    = btn_pause    | joy[8];
-
-
 
 //////////////////////////////////////////////////////////////////
 
@@ -392,7 +391,7 @@ target_top target_top
 	.clk_sys(clk_sys),
 	.clk_vid_en(clk_vid_en),
 
-	.reset_in(reset),
+	.reset_in(iRST),
  	.snd_l(snd_l),
  	.snd_r(snd_r),
 
@@ -400,6 +399,10 @@ target_top target_top
 	.vid_vs(VSync),
 	.vid_hb(HBlank),
 	.vid_vb(VBlank),
+
+	.vid_h_center(status[13:10]),    //Screen centering
+	.vid_v_center(status[16:14]),
+	.vid_timing(status[7]),
 
 	.vid_r(r),
 	.vid_g(g),
