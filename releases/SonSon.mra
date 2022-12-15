@@ -3,6 +3,7 @@
     <mameversion>0216</mameversion>
     <setname>sonson</setname>
     <manufacturer>Capcom</manufacturer>
+    <rotation>horizontal</rotation>
     <rbf>sonson</rbf>
 
     <switches default="A0,30" base="8" page_id="1" page_name="Switches">
