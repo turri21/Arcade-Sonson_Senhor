@@ -59,13 +59,17 @@ begin
     elsif rising_edge(clk) and clk_ena = '1'then
       hcnt <= hcnt + 1;
       if hcnt = '0'&x"FF" then
-        hcnt <= '1'&x"80";
+        if vid_timing then
+          hcnt <= '1'&x"80";
+        else
+          hcnt <= '1'&x"83";
+        end if;
         vcnt <= vcnt + 1;
         if vcnt = '0'&x"FF" then
           if vid_timing then
-            vcnt <= '1'&x"E6"; -- Checked from FA to push the VSync freq to 57.3Hz
+            vcnt <= '1'&x"E6"; -- Checked from FA to push the VSync freq to 55.3Hz
           else
-            vcnt <= '1'&x"FA"; -- Checked from FA to push the VSync freq to 59.6Hz
+            vcnt <= '1'&x"F8"; -- Checked from FA to push the VSync freq to 59.6Hz
           end if;
         end if;
       end if;
@@ -96,11 +100,10 @@ begin
 
       -- display sync
         if vid_timing then -- Adjust v_center offset so it does not travel outside its range
-          vid_offset <= B"11000"; -- -8
+          vid_offset <= B"10110"; -- -10
         else
-          vid_offset <= B"00010"; -- 2
+          vid_offset <= B"00000"; -- 0
         end if;
-
       if signed(hcnt) = signed(vid_h_center) + ('1' & x"A8") then
         hsync <= '1';
         if signed(vcnt) = signed(vid_v_center) + ('1' & x"FC") + vid_offset then 

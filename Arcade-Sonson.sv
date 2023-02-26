@@ -198,8 +198,8 @@ assign AUDIO_MIX = 3; // Arcade is mono, status[10:9];
 
 wire [1:0] ar = status[122:121];
 
-assign VIDEO_ARX = (!ar) ? 12'd4 : (ar - 1'd1);
-assign VIDEO_ARY = (!ar) ? 12'd3 : 12'd0;
+assign VIDEO_ARX = (!ar) ? 12'd300 : (ar - 1'd1);
+assign VIDEO_ARY = (!ar) ? 12'd313 : 12'd0;
 // Status Bit Map:
 //             Upper                             Lower              
 // 0         1         2         3          4         5         6   
@@ -216,14 +216,14 @@ localparam CONF_STR = {
     "P1,Video Settings;",
 	"P1OAD,Analog Video H-Pos,0,+1,+2,+3,+4,+5,+6,+7,-8,-7,-6,-5,-4,-3,-2,-1;",
 	"P1OEG,Analog Video V-Pos,0,+1,+2,+3,-4,-3,-2,-1;",
-	"P1O7,Video Timing,Normal(59.6Hz),PCB(55.4Hz);",
+	"P1O7,Video Timing,Normal(59.7Hz),PCB(55.4Hz);",
 	"-;",
 	"DIP;",
 	"-;",
 	"J1,Shot,Start 1P,Start 2P,Coin,Pause;",
 	"jn,A,B,Start,Select,R,L;",
 	"jp,B,A,Start,,Select;",
-	"T[0],Reset;",
+	"R[0],Reset;",
 	"V,v",`BUILD_DATE 
 };
 
@@ -273,6 +273,7 @@ hps_io #(.CONF_STR(CONF_STR)) hps_io
 	.forced_scandoubler(forced_scandoubler),
 	.gamma_bus(gamma_bus),
 	.direct_video(direct_video),
+    .new_vmode(new_vmode), 
 
 	.ioctl_download(ioctl_download),
 	.ioctl_upload(ioctl_upload),
@@ -305,8 +306,8 @@ pll pll
 	.locked(pll_locked)
 );
 
-wire iRST  = RESET | status[0] | buttons[1] | ireset;
-
+wire reset  = RESET | status[0] | buttons[1] | ireset;
+wire ireset;
 ///////////////////         Keyboard           //////////////////
 
 reg btn_up       = 0;
@@ -368,6 +369,23 @@ wire m_coin2    = btn_coin2;
 wire m_pause    = btn_pause    | joy[8];
 
 //////////////////////////////////////////////////////////////////
+// Check for video mode change
+reg new_vmode;
+always @(posedge clk_sys) begin
+	reg old_mode;
+	int to;
+
+	if(~(reset)) begin
+		old_mode <= status[7];
+		if(old_mode != status[7]) to <= 5000000;
+	end
+	else to <= 5000000;
+
+	if(to) begin
+		to <= to - 1;
+		if(to == 1) new_vmode <= ~new_vmode;
+	end
+end
 
 // DIP SWITCHES
 reg [7:0] dip_sw[8];	// Active-LOW
@@ -384,14 +402,13 @@ wire VBlank;
 wire VSync;
 wire ce_pix;
 wire [7:0] video;
-wire ireset;
 
 target_top target_top
 (
 	.clk_sys(clk_sys),
 	.clk_vid_en(clk_vid_en),
 
-	.reset_in(iRST),
+	.reset_in(reset),
  	.snd_l(snd_l),
  	.snd_r(snd_r),
 
