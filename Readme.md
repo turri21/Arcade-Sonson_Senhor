@@ -1,3 +1,8 @@
+-=(SonSon_Senhor notes)=-
+
+Tested: Working Video 720p, 1080p & Sound
+
+___
 # [Arcade: Capcom SonSon](https://en.wikipedia.org/wiki/SonSon) for [MiSTer](https://mister-devel.github.io/MkDocs_MiSTer/)
 
 ![SonSon 2 Logo](docs/SonsonCover.jpg)
